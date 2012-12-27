@@ -638,6 +638,9 @@ class ViEval(sublime_plugin.TextCommand):
         # Ensure the selection is visible
         self.view.show(self.view.sel())
 
+        if motion_command == 'expand_selection':
+            self.view.run_command('vi_move_to_first_non_white_space_character')
+
 
 class EnterInsertMode(sublime_plugin.TextCommand):
     # Ensure no undo group is created: the only entry on the undo stack should
@@ -909,10 +912,12 @@ class PasteFromRegisterCommand(sublime_plugin.TextCommand):
 
         offset = 0
 
+        line_wise = len(text) > 0 and text[-1] == '\n'
+
         for s in regions:
             s = sublime.Region(s.a + offset, s.b + offset)
 
-            if len(text) > 0 and text[-1] == '\n':
+            if line_wise:
                 # paste line-wise
                 if forward:
                     start = self.view.full_line(s.end()).b
@@ -934,6 +939,10 @@ class PasteFromRegisterCommand(sublime_plugin.TextCommand):
         self.view.sel().clear()
         for s in new_sel:
             self.view.sel().add(s)
+
+        if line_wise:
+            self.view.run_command('vi_move_to_first_non_white_space_character')
+
 
     def is_enabled(self, register, repeat = 1, forward = True):
         return has_register(register)
