@@ -171,7 +171,7 @@ class ViMoveToBrackets(sublime_plugin.TextCommand):
                     return pt + match.start() + (1 if match.group(2) else 0)
                 else:
                     return pt
-            transform_selection(self.view, move_to_next_bracket, extend=True)
+            # transform_selection(self.view, move_to_next_bracket, extend=True)
             self.view.run_command("move_to", {"to": "brackets", "extend": True, "force_outer": True})
         else:
             self.move_by_percent(repeat)
